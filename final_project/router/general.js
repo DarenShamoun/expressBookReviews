@@ -16,41 +16,78 @@ public_users.post("/register", (req, res) => {
     res.status(201).json({ message: "User successfully registered" });
 });
 
+function getAllBooks() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(Object.values(books)); 
+        }, 3000); 
+    });
+}
+
+function getBookByISBN(isbn) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            const book = books[isbn]; 
+            book ? resolve(book) : reject(new Error("Book not found"));
+        }, 3000);
+    });
+}
+
+function getBooksByAuthor(author) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const results = Object.values(books).filter(b => b.author === author);
+            resolve(results.length ? results : "No books found by this author");
+        }, 3000);
+    });
+}
+
+function getBooksByTitle(title) {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            const results = Object.values(books).filter(b => b.title === title);
+            resolve(results.length ? results : "No books found with this title");
+        }, 3000);
+    });
+}
+
 // Get the book list available in the shop
-public_users.get('/', function (req, res) {
-    res.json(JSON.stringify(books));
+public_users.get('/', async (req, res) => {
+    try {
+        const allBooks = await getAllBooks();
+        res.json(allBooks);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn', function (req, res) {
-    const isbn = req.params.isbn;
-    const book = books[isbn];
-    if (book) {
+public_users.get('/isbn/:isbn', async (req, res) => {
+    try {
+        const book = await getBookByISBN(req.params.isbn);
         res.json(book);
-    } else {
-        res.status(404).json({ message: "Book not found" });
+    } catch (error) {
+        res.status(404).json({ message: error.message });
     }
-}); 
+});
   
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
-    const author = req.params.author;
-    const booksByAuthor = Object.values(books).filter(b => b.author === author);
-    if (booksByAuthor.length) {
+public_users.get('/author/:author', async (req, res) => {
+    try {
+        const booksByAuthor = await getBooksByAuthor(req.params.author);
         res.json(booksByAuthor);
-    } else {
-        res.status(404).json({ message: "No books found by this author" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
-    const title = req.params.title;
-    const booksByTitle = Object.values(books).filter(b => b.title === title);
-    if (booksByTitle.length) {
+public_users.get('/title/:title', async (req, res) => {
+    try {
+        const booksByTitle = await getBooksByTitle(req.params.title);
         res.json(booksByTitle);
-    } else {
-        res.status(404).json({ message: "No books found with this title" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 

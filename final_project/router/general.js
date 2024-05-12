@@ -16,23 +16,26 @@ public_users.post("/register", (req, res) => {
     res.status(201).json({ message: "User successfully registered" });
 });
 
+// Simulated promise-based function to get all books
 function getAllBooks() {
     return new Promise((resolve) => {
         setTimeout(() => {
-            resolve(Object.values(books)); 
-        }, 3000); 
+            resolve(Object.values(books)); // Convert object to array for output
+        }, 3000);  // Delay to simulate database fetch
     });
 }
 
+// Simulated promise-based function to get book details by ISBN
 function getBookByISBN(isbn) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const book = books[isbn]; 
+            const book = books[isbn]; // Access the book directly by key
             book ? resolve(book) : reject(new Error("Book not found"));
-        }, 3000);
+        }, 3000);  // Delay to simulate database fetch
     });
 }
 
+// Simulated promise-based function to get books by author
 function getBooksByAuthor(author) {
     return new Promise((resolve) => {
         setTimeout(() => {
@@ -42,6 +45,7 @@ function getBooksByAuthor(author) {
     });
 }
 
+// Simulated promise-based function to get books by title
 function getBooksByTitle(title) {
     return new Promise((resolve) => {
         setTimeout(() => {
